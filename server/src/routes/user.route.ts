@@ -1,7 +1,7 @@
 import { Router } from "express";
 import type { Router as RouterType } from "express";
 import { createUser, getUsers } from "@/controllers/user.controller";
-import { validateBody } from "@/middlewares/validate";
+import { validateBody } from "@/middlewares/validator";
 import { createUserValidation } from "@/validations/user.validation";
 
 const router: RouterType = Router();

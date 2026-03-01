@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 import { StatusCodes } from "http-status-codes";
-import bcrypt from "bcrypt"; // Import for security
+import bcrypt from "bcrypt";
 import { db } from "@/config/db";
 import { users } from "@/models/index";
 import { type CreateUserBody } from "@/validations/user.validation";

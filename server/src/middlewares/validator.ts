@@ -1,14 +1,14 @@
 import type { Request, Response, NextFunction } from "express";
-import { type ZodSchema, ZodError } from "zod";
+import { z, ZodError } from "zod";
 
-export const validateBody = (schema: ZodSchema) => {
+export const validateBody = (schema: z.ZodTypeAny) => {
   return (req: Request, res: Response, next: NextFunction): void => {
     try {
       schema.parse(req.body);
-
       next();
     } catch (error) {
       if (error instanceof ZodError) {
+        // Send a clean 400 Bad Request
         res.status(400).json({
           error: "Validation failed",
           details: error.issues.map((e) => ({
@@ -18,9 +18,8 @@ export const validateBody = (schema: ZodSchema) => {
         });
         return;
       }
-      res
-        .status(500)
-        .json({ error: "Internal server error during validation" });
+      // Pass other errors to your global errorHandler.ts
+      next(error);
     }
   };
 };
