@@ -64,7 +64,7 @@ app.get("/", (req: Request, res: Response) => {
 });
 
 // Apply the strict rate limiter ONLY to the auth routes to prevent password guessing
-app.use("/api/auth", apiLimiter, authRoutes);
+app.use("/dawg/auth", apiLimiter, authRoutes);
 
 // Standard routes
 // app.use("/api/users", userRoutes);
