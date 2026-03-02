@@ -43,7 +43,6 @@ const register = async (
 
     res.status(StatusCodes.CREATED).json({ user: safeUser });
   } catch (error) {
-    // catches both your BadRequestError AND unexpected database crashes
     next(error);
   }
 };

@@ -8,7 +8,6 @@ export const validateBody = (schema: z.ZodTypeAny) => {
       next();
     } catch (error) {
       if (error instanceof ZodError) {
-        // Send a clean 400 Bad Request
         res.status(400).json({
           error: "Validation failed",
           details: error.issues.map((e) => ({
@@ -18,7 +17,7 @@ export const validateBody = (schema: z.ZodTypeAny) => {
         });
         return;
       }
-      // Pass other errors to your global errorHandler.ts
+      // pass the error to the global error handler
       next(error);
     }
   };
