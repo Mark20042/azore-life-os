@@ -1,6 +1,5 @@
 import { pgTable, serial, text, boolean, timestamp } from "drizzle-orm/pg-core";
 import { users } from "@/models/users";
-import e from "express";
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
