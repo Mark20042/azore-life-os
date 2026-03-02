@@ -1,5 +1,6 @@
 import { pgTable, serial, text, boolean, timestamp } from "drizzle-orm/pg-core";
 import { users } from "@/models/users";
+import e from "express";
 
 export const tasks = pgTable("tasks", {
   id: serial("id").primaryKey(),
@@ -8,3 +9,4 @@ export const tasks = pgTable("tasks", {
   userId: serial("user_id").references(() => users.id),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
+
