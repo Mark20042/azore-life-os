@@ -8,7 +8,6 @@ export const errorHandler = (
   res: Response,
   next: NextFunction,
 ): void => {
-  // log the error details to logger with request info and stack trace
   logger.error(`${req.method} ${req.originalUrl} - ${err.message}`, {
     stack: err.stack,
   });

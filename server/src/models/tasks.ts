@@ -10,3 +10,4 @@ export const tasks = pgTable("tasks", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export type Task = typeof tasks.$inferSelect;
