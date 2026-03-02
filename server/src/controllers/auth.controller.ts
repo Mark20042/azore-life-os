@@ -4,12 +4,15 @@ import { StatusCodes } from "http-status-codes";
 import bcrypt from "bcrypt";
 import { db } from "@/config/db";
 import { users } from "@/models/index";
-import { type CreateUserBody } from "@/validations/user.validation";
+import {
+  type RegisterBody,
+  type LoginBody,
+} from "@/validations/user.validation";
 import { generateTokens } from "@/utils/generateToken";
 import { BadRequestError, UnauthenticatedError } from "@/errors/index";
 
 const register = async (
-  req: Request<{}, {}, CreateUserBody>,
+  req: Request<{}, {}, RegisterBody>,
   res: Response,
   next: NextFunction,
 ) => {
@@ -45,7 +48,11 @@ const register = async (
   }
 };
 
-const login = async (req: Request, res: Response, next: NextFunction) => {
+const login = async (
+  req: Request<{}, {}, LoginBody>,
+  res: Response,
+  next: NextFunction,
+) => {
   try {
     const { email, password } = req.body;
 

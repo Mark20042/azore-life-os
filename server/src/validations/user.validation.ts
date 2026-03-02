@@ -8,9 +8,16 @@ export const insertUserSchema = createInsertSchema(users, {
   password: (schema) => schema.min(6, "Password must be at least 6 characters"),
 });
 
-export const createUserValidation = insertUserSchema.omit({
+export const registerUserValidation = insertUserSchema.omit({
   id: true,
   createdAt: true,
 });
 
-export type CreateUserBody = z.infer<typeof createUserValidation>;
+export const loginValidation = insertUserSchema.pick({
+  email: true,
+  password: true,
+});
+
+export type LoginBody = z.infer<typeof loginValidation>;
+
+export type RegisterBody = z.infer<typeof registerUserValidation>;
