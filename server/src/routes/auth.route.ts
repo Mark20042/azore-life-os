@@ -1,6 +1,6 @@
 import { Router } from "express";
 import type { Router as RouterType } from "express";
-import { register, login, logout } from "@/controllers/auth.controller"; // Adjust path if needed
+import { register, login, logout } from "@/controllers/auth.controller";
 import { validateBody } from "@/middlewares/validator";
 import {
   registerUserValidation,
