@@ -9,10 +9,13 @@ import {
 
 const router: RouterType = Router();
 
+// POST /dawg/auth/register
 router.post("/register", validateBody(registerUserValidation), register);
 
+// POST /dawg/auth/login
 router.post("/login", validateBody(loginValidation), login);
 
+// POST /dawg/auth/logout
 router.post("/logout", logout);
 
 export default router;

@@ -4,30 +4,40 @@ import cookieParser from "cookie-parser";
 import helmet from "helmet";
 import cors from "cors";
 import rateLimit from "express-rate-limit";
+import morgan from "morgan";
 
 // routes import
 import authRoutes from "@/routes/auth.route";
 // import userRoutes from "@/routes/user.route";
-// import taskRoutes from "@/routes/task.route";
+import taskRoutes from "@/routes/task.route";
 
 // middlewares import
 import { errorHandler } from "@/middlewares/errorHandler";
 import { notFoundMiddleware } from "@/middlewares/notFound";
 import { logger } from "@/utils/logger";
+import { initCronJobs } from "@/services/taskCleanup";
 
 dotenv.config();
 
 const app = express();
 
-// security middlewares
+//log config
+const stream = {
+  write: (message: string) => {
+    logger.info(message.trim());
+  },
+};
 
+app.use(morgan("tiny", { stream }));
+
+// security middlewares
 // Set security HTTP headers
-app.use(
-  helmet({
-    crossOriginEmbedderPolicy: false,
-    // will Add  CSP directives back here  set up Swagger later
-  }),
-);
+// app.use(
+//   helmet({
+//     crossOriginEmbedderPolicy: false,
+//     // will Add  CSP directives back here  set up Swagger later
+//   }),
+// );
 
 // Enable CORS (Cross-Origin Resource Sharing)
 const allowedOrigins = ["http://localhost:3000", "http://localhost:5173"];
@@ -63,16 +73,21 @@ app.get("/", (req: Request, res: Response) => {
   `);
 });
 
-// Apply the strict rate limiter ONLY to the auth routes to prevent password guessing
-app.use("/dawg/auth", apiLimiter, authRoutes);
+// api routes
+const apiRouter = express.Router();
+// rate limiter for auth routes
+apiRouter.use("/auth", apiLimiter, authRoutes);
+// app.use("/users", userRoutes);
+apiRouter.use("/tasks", taskRoutes);
 
-// Standard routes
-// app.use("/api/users", userRoutes);
-// app.use("/api/tasks", taskRoutes);
+// mount api routes
+app.use("/dawg", apiRouter);
 
 //  error middleware
 app.use(notFoundMiddleware);
 app.use(errorHandler);
+
+initCronJobs();
 
 //  start the server
 const PORT = process.env.PORT || 4000;
