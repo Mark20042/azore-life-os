@@ -1,4 +1,4 @@
-import Classmate from "./Classmate";
+import Classmate from "./Classmate.tsx";
 function App() {
   return <Classmate />;
 }
