@@ -1,6 +1,6 @@
-import { Button } from "@heroui/react";
+import Classmate from "./Classmate";
 function App() {
-  return <Button>My Button</Button>;
+  return <Classmate />;
 }
 
 export default App;
