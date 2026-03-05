@@ -1,5 +1,4 @@
 import { useState } from "react";
-import { Button, Input, Card } from "@heroui/react";
 
 type Classmate = {
   name: string;
@@ -40,20 +39,20 @@ const Classmate = () => {
   };
 
   return (
-    <Card className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white rounded-xl shadow-md border border-gray-100">
       <h2 className="text-2xl font-bold mb-6 text-gray-800">
         Mga Classmate Nimo{" "}
       </h2>
 
       <div className="flex items-end gap-3 w-1/2 mb-8">
-        <Input
+        <input
           placeholder="Name sa Classmate"
           value={name}
           onChange={inputNameChange()}
         />
-        <Button size="lg" onClick={addClassmate} className="h-10">
+        <button onClick={addClassmate} className="h-10">
           Add
-        </Button>
+        </button>
       </div>
 
       <ul className="flex flex-col gap-3">
@@ -63,20 +62,19 @@ const Classmate = () => {
             className="flex items-center justify-between p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-all border border-transparent hover:border-gray-200"
           >
             <span className="text-gray-700 font-medium">{classmate.name}</span>
-            <Button
-              size="sm"
-              variant="tertiary"
+            <button
+
+
               onClick={() => handleUpdate(index)}
             >
               Update
-            </Button>
-            <Button
-              size="sm"
-              variant="secondary"
+            </button>
+            <button
+
               onClick={() => removeClassmate(index)}
             >
               Remove
-            </Button>
+            </button>
           </li>
         ))}
       </ul>
@@ -86,7 +84,7 @@ const Classmate = () => {
           No classmates yet
         </p>
       )}
-    </Card>
+    </div>
   );
 };
 

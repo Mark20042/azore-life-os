@@ -76,7 +76,7 @@ app.get("/", (req: Request, res: Response) => {
 // api routes
 const apiRouter = express.Router();
 // rate limiter for auth routes
-apiRouter.use("/auth", apiLimiter, authRoutes);
+apiRouter.use("/auth", authRoutes);
 // app.use("/users", userRoutes);
 apiRouter.use("/tasks", taskRoutes);
 

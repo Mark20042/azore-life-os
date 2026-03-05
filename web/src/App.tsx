@@ -1,28 +1,26 @@
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
-
-const Login = () => <div className="p-8 text-2xl">Login Page Placeholder</div>;
-const Register = () => (
-  <div className="p-8 text-2xl">Register Page Placeholder</div>
-);
-const Dashboard = () => (
-  <div className="p-8 text-2xl">Welcome to your Life OS Dashboard!</div>
-);
+import Layout from "@/components/Layout";
+import Landing from "@/pages/landing/Landing";
+import Login from "@/pages/auth/Login";
+import Register from "@/pages/auth/Register";
+import Dashboard from "@/pages/user/Dashboard";
 
 function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* Public Routes */}
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        {/* All routes wrapped with the shared Navbar layout */}
+        <Route element={<Layout />}>
+          {/* Public Routes */}
+          <Route path="/" element={<Landing />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
 
-        {/* Only logged-in users */}
-        <Route element={<ProtectedRoute />}>
-          <Route path="/dashboard" element={<Dashboard />} />
-
-          {/* If they visit the root URL '/', redirect them to the dashboard */}
-          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {/* Protected Routes — only logged-in users */}
+          <Route element={<ProtectedRoute />}>
+            <Route path="/dashboard" element={<Dashboard />} />
+          </Route>
         </Route>
       </Routes>
     </BrowserRouter>

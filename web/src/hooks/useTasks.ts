@@ -20,12 +20,40 @@ export const useCreateTask = () => {
       title: string;
       deadline: string;
       category: string;
+      priority?: "low" | "medium" | "high";
     }) => {
       const response = await api.post("/tasks", newTaskData);
       return response.data.task;
     },
     onSuccess: () => {
       // this tells TanStack to instantly refresh the calendar when a new task is added!
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+};
+export const useUpdateTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, ...updateData }: Partial<Task> & { id: number }) => {
+      const response = await api.patch(`/tasks/${id}`, updateData);
+      return response.data.task;
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["tasks"] });
+    },
+  });
+};
+
+export const useDeleteTask = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: number) => {
+      const response = await api.delete(`/tasks/${id}`);
+      return response.data;
+    },
+    onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["tasks"] });
     },
   });
