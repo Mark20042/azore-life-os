@@ -138,9 +138,17 @@ export const updateTask = async (
       throw new BadRequestError("Invalid Task ID provided");
     }
 
+    const updatedData = { ...req.body };
+    if (updatedData.deadline) {
+      updatedData.deadline = new Date(updatedData.deadline);
+    }
+    if (updatedData.reminderAt) {
+      updatedData.reminderAt = new Date(updatedData.reminderAt);
+    }
+
     const updatedTask = await db
       .update(tasks)
-      .set(req.body)
+      .set(updatedData)
       .where(
         and(
           eq(tasks.id, taskId),
