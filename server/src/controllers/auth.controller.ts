@@ -9,7 +9,12 @@ import {
   type LoginBody,
 } from "@/validations/user.validation";
 import { generateTokens } from "@/utils/generateToken";
-import { BadRequestError, UnauthenticatedError } from "@/errors/index";
+import {
+  BadRequestError,
+  UnauthenticatedError,
+  NotFoundError,
+} from "@/errors/index";
+import { type AuthRequest } from "@/middlewares/auth";
 
 const register = async (
   req: Request<{}, {}, RegisterBody>,
@@ -89,4 +94,25 @@ const logout = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { register, login, logout };
+const getMe = async (req: AuthRequest, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.user!.userId;
+
+    const user = await db
+      .select()
+      .from(users)
+      .where(eq(users.id, userId))
+      .limit(1);
+
+    if (user.length === 0) {
+      throw new NotFoundError("User not found");
+    }
+
+    const { password: _, ...safeUser } = user[0]!;
+
+    res.status(StatusCodes.OK).json({ user: safeUser });
+  } catch (error) {
+    next(error);
+  }
+};
+export { register, login, logout, getMe };
