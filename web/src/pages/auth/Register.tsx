@@ -2,7 +2,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff, Zap, ArrowRight, ArrowLeft, KeyRound, Mail, User as UserIcon } from "lucide-react";
+import {
+  Eye,
+  EyeOff,
+  ArrowRight,
+  ArrowLeft,
+  KeyRound,
+  Mail,
+  User as UserIcon,
+} from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useRegister } from "@/hooks/useAuth";
 
@@ -24,7 +32,7 @@ export default function Register() {
         onSuccess: () => {
           navigate("/dashboard");
         },
-      }
+      },
     );
   };
 
@@ -40,8 +48,9 @@ export default function Register() {
             <ArrowLeft size={16} /> Back to Home
           </a>
           <div className="flex items-center gap-3 mb-4">
-         
-            <h1 className="text-3xl font-bold text-foreground">Create Account</h1>
+            <h1 className="text-3xl font-bold text-foreground">
+              Create Account
+            </h1>
           </div>
 
           <p className="text-default-500 mb-2">
@@ -55,7 +64,10 @@ export default function Register() {
                 Full Name <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <UserIcon className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                <UserIcon
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={18}
+                />
                 <Input
                   id="name"
                   type="text"
@@ -75,7 +87,10 @@ export default function Register() {
                 Email <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                <Mail
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={18}
+                />
                 <Input
                   id="email"
                   type="email"
@@ -94,7 +109,10 @@ export default function Register() {
                 Password <span className="text-destructive">*</span>
               </Label>
               <div className="relative">
-                <KeyRound className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" size={18} />
+                <KeyRound
+                  className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                  size={18}
+                />
                 <Input
                   id="password"
                   type={isVisible ? "text" : "password"}
@@ -122,7 +140,9 @@ export default function Register() {
               disabled={registerMutation.isPending}
             >
               {registerMutation.isPending ? (
-                <span className="flex items-center gap-2">Creating account...</span>
+                <span className="flex items-center gap-2">
+                  Creating account...
+                </span>
               ) : (
                 <span className="flex items-center gap-2">
                   Sign Up <ArrowRight size={18} />
@@ -133,7 +153,10 @@ export default function Register() {
 
           <p className="text-center text-sm text-default-500 mt-6 pt-6 border-t border-divider">
             Already have an account?{" "}
-            <a href="/login" className="font-semibold text-primary hover:underline">
+            <a
+              href="/login"
+              className="font-semibold text-primary hover:underline"
+            >
               Sign in instead
             </a>
           </p>

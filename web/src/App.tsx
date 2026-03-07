@@ -10,7 +10,6 @@ function App() {
   return (
     <BrowserRouter>
       <Routes>
-        {/* All routes wrapped with the shared Navbar layout */}
         <Route element={<Layout />}>
           {/* Public Routes */}
           <Route path="/" element={<Landing />} />
