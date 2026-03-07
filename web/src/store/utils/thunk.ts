@@ -1,5 +1,5 @@
 import type { Action, ThunkAction } from '@reduxjs/toolkit';
-import type { RootState } from '../';
+import type { RootState } from '../index';
 
 /**
  * Base type for async thunks in the application.
