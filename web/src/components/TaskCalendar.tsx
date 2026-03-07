@@ -1,4 +1,7 @@
-import { useState, useMemo } from "react";
+import { useState, useMemo, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks } from "@/store/reducers/taskSlice";
+import type { AppDispatch, RootState } from "@/store";
 import {
   format,
   startOfMonth,
@@ -13,7 +16,6 @@ import {
   isWithinInterval,
   addDays,
 } from "date-fns";
-import { useMyTasks } from "@/hooks/useTasks";
 import {
   Loader2,
   ChevronLeft,
@@ -27,7 +29,13 @@ import type { Task } from "@/types";
 type ViewType = "month" | "week" | "day" | "agenda";
 
 export default function TaskCalendar() {
-  const { data: tasks, isLoading, isError } = useMyTasks();
+  const dispatch = useDispatch<AppDispatch>();
+  const { tasks, isLoading, error } = useSelector((state: RootState) => state.tasks);
+
+  useEffect(() => {
+    dispatch(fetchTasks(undefined));
+  }, [dispatch]);
+
   const [currentDate, setCurrentDate] = useState(new Date());
   const [view, setView] = useState<ViewType>("month");
 
@@ -54,7 +62,7 @@ export default function TaskCalendar() {
     });
   };
 
-  // --- LIST/AGENDA VIEW MATH ---
+
   const listTasks = useMemo(() => {
     if (!tasks || view === "month") return [];
 
@@ -98,7 +106,7 @@ export default function TaskCalendar() {
     );
   }
 
-  if (isError) {
+  if (error) {
     return (
       <div className="w-full h-[600px] flex items-center justify-center text-danger">
         <p>Failed to load tasks.</p>
@@ -146,11 +154,10 @@ export default function TaskCalendar() {
             <button
               key={v}
               onClick={() => setView(v)}
-              className={`px-3 py-1.5 capitalize transition-colors ${
-                view === v
-                  ? "bg-gray-900 text-white"
-                  : "bg-white text-gray-700 hover:bg-gray-50"
-              } ${v !== "agenda" ? "border-r" : ""}`}
+              className={`px-3 py-1.5 capitalize transition-colors ${view === v
+                ? "bg-gray-900 text-white"
+                : "bg-white text-gray-700 hover:bg-gray-50"
+                } ${v !== "agenda" ? "border-r" : ""}`}
             >
               {v}
             </button>
@@ -186,19 +193,17 @@ export default function TaskCalendar() {
               return (
                 <div
                   key={day.toString()}
-                  className={`flex flex-col bg-white transition-colors overflow-hidden min-h-0 ${
-                    !isCurrentMonth ? "bg-gray-50/50" : ""
-                  }`}
+                  className={`flex flex-col bg-white transition-colors overflow-hidden min-h-0 ${!isCurrentMonth ? "bg-gray-50/50" : ""
+                    }`}
                 >
                   <div className="sticky top-0 z-10 flex justify-end p-1.5 bg-inherit shrink-0">
                     <span
-                      className={`text-sm font-medium w-6 h-6 flex items-center justify-center rounded-full ${
-                        isToday
-                          ? "bg-primary text-white"
-                          : !isCurrentMonth
-                            ? "text-gray-400"
-                            : "text-gray-700"
-                      }`}
+                      className={`text-sm font-medium w-6 h-6 flex items-center justify-center rounded-full ${isToday
+                        ? "bg-primary text-white"
+                        : !isCurrentMonth
+                          ? "text-gray-400"
+                          : "text-gray-700"
+                        }`}
                     >
                       {format(day, "dd")}
                     </span>

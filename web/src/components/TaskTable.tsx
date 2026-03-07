@@ -1,4 +1,7 @@
-import { useMyTasks, useUpdateTask } from "@/hooks/useTasks";
+import { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { fetchTasks, updateTask } from "@/store/reducers/taskSlice";
+import type { AppDispatch, RootState } from "@/store";
 import { CheckCircle2, Circle, AlertTriangle, Clock, Loader2 } from "lucide-react";
 import type { Task } from "@/types/index";
 import { Badge } from "@/components/ui/badge";
@@ -34,11 +37,15 @@ function PriorityBadge({ priority }: { priority: Task["priority"] }) {
 }
 
 export default function TaskTable() {
-    const { data: tasks, isLoading, isError } = useMyTasks();
-    const updateTask = useUpdateTask();
+    const dispatch = useDispatch<AppDispatch>();
+    const { tasks, isLoading, error } = useSelector((state: RootState) => state.tasks);
+
+    useEffect(() => {
+        dispatch(fetchTasks(undefined));
+    }, [dispatch]);
 
     const toggleCompletion = (task: Task) => {
-        updateTask.mutate({ id: task.id, isCompleted: !task.isCompleted });
+        dispatch(updateTask({ id: task.id, isCompleted: !task.isCompleted }));
     };
 
     if (isLoading) {
@@ -50,7 +57,7 @@ export default function TaskTable() {
         );
     }
 
-    if (isError) {
+    if (error) {
         return (
             <div className="flex items-center justify-center h-64 text-destructive">
                 Failed to load tasks.

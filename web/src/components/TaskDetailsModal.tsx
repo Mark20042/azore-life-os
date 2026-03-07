@@ -1,4 +1,4 @@
-WWWWWWWWWWWWWWWimport {
+import {
     Dialog,
     DialogContent,
     DialogHeader,
@@ -11,7 +11,9 @@ import { Label } from "@/components/ui/label";
 import { Type, CalendarDays, Tag, AlertTriangle, Loader2 } from "lucide-react";
 import type { Task } from "@/types";
 import { useState, useEffect } from "react";
-import { useUpdateTask, useDeleteTask } from "@/hooks/useTasks";
+import { useDispatch, useSelector } from "react-redux";
+import { updateTask, deleteTask } from "@/store/reducers/taskSlice";
+import type { AppDispatch, RootState } from "@/store";
 import { Badge } from "@/components/ui/badge";
 
 interface TaskDetailsModalProps {
@@ -21,8 +23,8 @@ interface TaskDetailsModalProps {
 }
 
 export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsModalProps) {
-    const updateTask = useUpdateTask();
-    const deleteTask = useDeleteTask();
+    const dispatch = useDispatch<AppDispatch>();
+    const { isLoading } = useSelector((state: RootState) => state.tasks);
 
     const [isEditing, setIsEditing] = useState(false);
 
@@ -50,33 +52,34 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
 
     if (!task) return null;
 
-    const handleSave = (e: React.FormEvent) => {
+    const handleSave = async (e: React.FormEvent) => {
         e.preventDefault();
         const isoDeadline = new Date(deadline).toISOString();
 
-        updateTask.mutate({
+        const resultAction = await dispatch(updateTask({
             id: task.id,
             title,
             deadline: isoDeadline,
             category,
             priority
-        }, {
-            onSuccess: () => {
-                setIsEditing(false);
-            }
-        });
+        }));
+
+        if (updateTask.fulfilled.match(resultAction)) {
+            setIsEditing(false);
+        }
     };
 
-    const handleDelete = () => {
+    const handleDelete = async () => {
         if (confirm("Are you sure you want to delete this task?")) {
-            deleteTask.mutate(task.id, {
-                onSuccess: () => onClose()
-            });
+            const resultAction = await dispatch(deleteTask(task.id));
+            if (deleteTask.fulfilled.match(resultAction)) {
+                onClose();
+            }
         }
     };
 
     const toggleCompletion = () => {
-        updateTask.mutate({ id: task.id, isCompleted: !task.isCompleted });
+        dispatch(updateTask({ id: task.id, isCompleted: !task.isCompleted }));
     };
 
     return (
@@ -128,7 +131,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
                         </div>
 
                         <DialogFooter className="mt-6 flex sm:justify-between items-center w-full">
-                            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={deleteTask.isPending}>
+                            <Button variant="destructive" size="sm" onClick={handleDelete} disabled={isLoading}>
                                 Delete
                             </Button>
                             <div className="flex gap-2">
@@ -136,7 +139,7 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
                                     variant={task.isCompleted ? "outline" : "default"}
                                     size="sm"
                                     onClick={toggleCompletion}
-                                    disabled={updateTask.isPending}
+                                    disabled={isLoading}
                                 >
                                     {task.isCompleted ? "Mark Uncompleted" : "Mark Completed"}
                                 </Button>
@@ -195,8 +198,8 @@ export default function TaskDetailsModal({ isOpen, onClose, task }: TaskDetailsM
 
                         <DialogFooter className="mt-4 gap-2 sm:gap-0">
                             <Button variant="ghost" type="button" onClick={() => setIsEditing(false)}>Cancel</Button>
-                            <Button type="submit" disabled={updateTask.isPending}>
-                                {updateTask.isPending ? <Loader2 className="animate-spin" /> : "Save Changes"}
+                            <Button type="submit" disabled={isLoading}>
+                                {isLoading ? <Loader2 className="animate-spin" /> : "Save Changes"}
                             </Button>
                         </DialogFooter>
                     </form>

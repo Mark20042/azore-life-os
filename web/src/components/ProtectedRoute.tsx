@@ -1,8 +1,9 @@
 import { Navigate, Outlet } from "react-router-dom";
-import { useAuthSession } from "@/hooks/useAuth";
+import { useSelector } from "react-redux";
+import type { RootState } from "@/store";
 
 export const ProtectedRoute = () => {
-  const { data: user, isLoading, isError } = useAuthSession();
+  const { user, isLoading, error } = useSelector((state: RootState) => state.auth);
 
   if (isLoading) {
     return (
@@ -14,7 +15,7 @@ export const ProtectedRoute = () => {
     );
   }
 
-  if (isError || !user) {
+  if (error || !user) {
     return <Navigate to="/login" replace />;
   }
 

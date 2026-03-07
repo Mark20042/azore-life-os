@@ -1,6 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { useAuthSession } from "@/hooks/useAuth";
 import {
   LayoutDashboard,
   CalendarDays,
@@ -14,7 +13,6 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ onAddTask }: SidebarProps) {
-  const { data: user } = useAuthSession();
   const location = useLocation();
 
   const navItems = [
@@ -47,11 +45,10 @@ export default function Sidebar({ onAddTask }: SidebarProps) {
             <Link
               key={item.label}
               to={item.href}
-              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all no-underline ${
-                isActive
-                  ? "bg-primary/10 text-primary"
-                  : "text-default-500 hover:bg-default-100 hover:text-foreground"
-              }`}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium transition-all no-underline ${isActive
+                ? "bg-primary/10 text-primary"
+                : "text-default-500 hover:bg-default-100 hover:text-foreground"
+                }`}
             >
               <item.icon size={18} />
               {item.label}

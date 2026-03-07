@@ -12,7 +12,9 @@ import {
   User as UserIcon,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useRegister } from "@/hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { register } from "@/store/reducers/authSlice";
+import type { AppDispatch, RootState } from "@/store";
 
 export default function Register() {
   const [isVisible, setIsVisible] = useState(false);
@@ -22,18 +24,15 @@ export default function Register() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
   const navigate = useNavigate();
-  const registerMutation = useRegister();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
 
-  const handleRegister = (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
-    registerMutation.mutate(
-      { name, email, password },
-      {
-        onSuccess: () => {
-          navigate("/dashboard");
-        },
-      },
-    );
+    const resultAction = await dispatch(register({ name, email, password }));
+    if (register.fulfilled.match(resultAction)) {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -137,9 +136,9 @@ export default function Register() {
             <Button
               className="h-12 text-base font-semibold shadow-lg shadow-primary/30 mt-4"
               type="submit"
-              disabled={registerMutation.isPending}
+              disabled={isLoading}
             >
-              {registerMutation.isPending ? (
+              {isLoading ? (
                 <span className="flex items-center gap-2">
                   Creating account...
                 </span>

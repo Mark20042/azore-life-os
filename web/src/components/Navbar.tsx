@@ -1,5 +1,7 @@
 import { Link, useNavigate } from "react-router-dom";
-import { useAuthSession, useLogout } from "@/hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { logout } from "@/store/reducers/authSlice";
+import type { AppDispatch, RootState } from "@/store";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -20,16 +22,15 @@ import {
 } from "lucide-react";
 
 export default function Navbar() {
-  const { data: user, isLoading } = useAuthSession();
-  const logoutMutation = useLogout();
+  const { user, isLoading } = useSelector((state: RootState) => state.auth);
+  const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    logoutMutation.mutate(undefined, {
-      onSuccess: () => {
-        navigate("/login");
-      },
-    });
+  const handleLogout = async () => {
+    const resultAction = await dispatch(logout());
+    if (logout.fulfilled.match(resultAction)) {
+      navigate("/login");
+    }
   };
 
   return (

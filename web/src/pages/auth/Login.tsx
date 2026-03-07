@@ -5,14 +5,15 @@ import { Label } from "@/components/ui/label";
 import {
   Eye,
   EyeOff,
-  Zap,
   ArrowRight,
   ArrowLeft,
   KeyRound,
   Mail,
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { useLogin } from "@/hooks/useAuth";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "@/store/reducers/authSlice";
+import type { AppDispatch, RootState } from "@/store";
 
 export default function Login() {
   const [isVisible, setIsVisible] = useState(false);
@@ -21,18 +22,15 @@ export default function Login() {
 
   const toggleVisibility = () => setIsVisible(!isVisible);
   const navigate = useNavigate();
-  const loginMutation = useLogin();
+  const dispatch = useDispatch<AppDispatch>();
+  const { isLoading } = useSelector((state: RootState) => state.auth);
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    loginMutation.mutate(
-      { email, password },
-      {
-        onSuccess: () => {
-          navigate("/dashboard");
-        },
-      },
-    );
+    const resultAction = await dispatch(login({ email, password }));
+    if (login.fulfilled.match(resultAction)) {
+      navigate("/dashboard");
+    }
   };
 
   return (
@@ -120,9 +118,9 @@ export default function Login() {
             <Button
               className="h-12 text-base font-semibold shadow-lg shadow-primary/30 mt-2"
               type="submit"
-              disabled={loginMutation.isPending}
+              disabled={isLoading}
             >
-              {loginMutation.isPending ? (
+              {isLoading ? (
                 <span className="flex items-center gap-2">Signing in...</span>
               ) : (
                 <span className="flex items-center gap-2">

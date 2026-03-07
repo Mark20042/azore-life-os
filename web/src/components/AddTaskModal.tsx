@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { createTask } from "@/store/reducers/taskSlice";
+import type { AppDispatch, RootState } from "@/store";
 import { CalendarDays, Tag, Type, Flag } from "lucide-react";
-import { useCreateTask } from "@/hooks/useTasks";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -18,14 +20,15 @@ interface AddTaskModalProps {
 }
 
 export default function AddTaskModal({ isOpen, onClose }: AddTaskModalProps) {
+    const dispatch = useDispatch<AppDispatch>();
+    const { isLoading } = useSelector((state: RootState) => state.tasks);
+
     const [title, setTitle] = useState("");
     const [deadline, setDeadline] = useState("");
     const [category, setCategory] = useState("");
     const [priority, setPriority] = useState<"low" | "medium" | "high">("medium");
 
-    const createTask = useCreateTask();
-
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
         if (!title || !deadline || !category) return;
 
@@ -33,18 +36,15 @@ export default function AddTaskModal({ isOpen, onClose }: AddTaskModalProps) {
         // datetime-local gives "2026-03-10T14:30" but the backend expects "2026-03-10T14:30:00.000Z"
         const isoDeadline = new Date(deadline).toISOString();
 
-        createTask.mutate(
-            { title, deadline: isoDeadline, category, priority },
-            {
-                onSuccess: () => {
-                    setTitle("");
-                    setDeadline("");
-                    setCategory("");
-                    setPriority("medium");
-                    onClose();
-                },
-            }
-        );
+        const resultAction = await dispatch(createTask({ title, deadline: isoDeadline, category, priority }));
+
+        if (createTask.fulfilled.match(resultAction)) {
+            setTitle("");
+            setDeadline("");
+            setCategory("");
+            setPriority("medium");
+            onClose();
+        }
     };
 
     return (
@@ -147,9 +147,9 @@ export default function AddTaskModal({ isOpen, onClose }: AddTaskModalProps) {
                         </Button>
                         <Button
                             type="submit"
-                            disabled={createTask.isPending}
+                            disabled={isLoading}
                         >
-                            {createTask.isPending ? "Creating..." : "Create Task"}
+                            {isLoading ? "Creating..." : "Create Task"}
                         </Button>
                     </DialogFooter>
                 </form>
